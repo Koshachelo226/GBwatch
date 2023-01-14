@@ -91,6 +91,36 @@ void setup() {
   lcd.init();
   lcd.backlight();
   //intro();
+
+  lcd.setCursor(0,0);
+  lcd.print("GBT Lab Inc 1976");
+  delay(1000);
+  lcd.setCursor(0,1);
+  lcd.print("Starting GBT_OS");
+  delay(1000);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("...");
+  delay(1000);
+  lcd.setCursor(3,0);
+  lcd.print("...");
+  delay(1000);
+  lcd.setCursor(0,0);
+  lcd.clear();
+  for (int i=0; i< 16000; i+= 100) {
+      lcd.clear();
+      lcd.print("RAM Test:"+ String(i));
+    }
+  delay(600);
+  lcd.clear();
+  lcd.print("CPU Freq: 16 Mhz"); 
+  delay(1000);
+  lcd.clear();
+  lcd.print("Pls, don't crash");
+  lcd.setCursor(0,1);
+  lcd.print("this! :)");
+  delay(400);
+  lcd.clear();
   
 } 
 

@@ -1,19 +1,25 @@
 #include <GyverTimer.h>
 #include <DS1307RTC.h>
 #include <NewPing.h>
+#include <GyverEncoder.h>
+#include <LiquidCrystal_I2C.h>
+#include "GyverEncoder.h"
 
+#define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+#define ECHO_PIN     11  // Arduino pin tied to echo pin on the ultrasonic sensor.
+#define MAX_DISTANCE 200
 #define CLK 6
 #define DT 5
 #define SW 4
 #define laserPin 8
 
 bool alFlag = 0;
+bool rangeAnimStatus = 0;
 int alMin1 = 51;
 int alHour1 = 18;
 int alMin2 = 45;
 int alHour2 = 19; 
 int rangeAnim = 4;
-bool rangeAnimStatus = 0;
 int hours = 0;
 int mins = 0;
 int hours1 = 0;
@@ -22,84 +28,34 @@ int menuSelect = 0;
 int menu = 0;
 int laserStatus = 0;
 
-#define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN     11  // Arduino pin tied to echo pin on the ultrasonic sensor.
-#define MAX_DISTANCE 200
-
-#include "GyverEncoder.h"
 Encoder enc1(CLK, DT, SW);
-
-#include <GyverEncoder.h>
-#include <LiquidCrystal_I2C.h>
-
 LiquidCrystal_I2C lcd(0x27,20,4);
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 GTimer Timer(MS);
 
-byte ranger[] = {
-  B10000,
-  B11110,
-  B10001,
-  B10001,
-  B10001,
-  B10001,
-  B11110,
-  B10000
-};
-
-byte wave[] = {
-  B00000,
-  B10010,
-  B01001,
-  B01001,
-  B01001,
-  B01001,
-  B10010,
-  B00000
-};
-
-byte waveBack[] = {
-  B00000,
-  B01001,
-  B10010,
-  B10010,
-  B10010,
-  B10010,
-  B01001,
-  B00000
-};
-
 void setup() {
-
-  lcd.createChar(0, ranger);
-  lcd.createChar(1, wave);
-  lcd.createChar(2, waveBack);
-  Timer.setTimeout(1000);
-
   Serial.begin(9600);
   
-  digitalWrite(laserPin,1);
+  Timer.setTimeout(1000);
+  enc1.setTickMode(AUTO);
+  
   pinMode(laserPin, OUTPUT);
   pinMode(7, OUTPUT);
   pinMode(2, OUTPUT);
   pinMode(3, OUTPUT);
   pinMode(10, OUTPUT);
   
-  
-  enc1.setTickMode(AUTO);
-  
   lcd.init();
   lcd.backlight();
-  intro();
+  //intro();
   
 } 
 
 void loop() {
-  tmElements_t tm;
-  
+  tmElements_t tm; 
   int realH = tm.Hour;
   int realM = tm.Minute;
-  Serial.println(alFlag);
+
   if (realH == alHour1 && realM == alMin1) {alFlag = 1;}
   if (alFlag == 1) {alarmON();}
   if (alFlag == 0) {
@@ -118,8 +74,6 @@ void loop() {
   digitalWrite(10, CLK);
   }
 }
-
-
 
 void selectMenu() {
   tmElements_t tm;
@@ -206,23 +160,6 @@ void rangeMenu() {
 
     lcd.setCursor(7,0);
     lcd.print(sonar.ping_cm());
-
-    /*lcd.setCursor(3,1);
-    lcd.write(0);
-    lcd.setCursor(12,1);
-    lcd.print("|");
-
-    lcd.setCursor(5,1);
-    lcd.print(")");
-
-    lcd.setCursor(7,1);
-    lcd.print("(");;
-
-    lcd.setCursor(9,1);
-    lcd.print(")");
-
-    lcd.setCursor(11,1);
-    lcd.print("(");*/
     
   }
 
